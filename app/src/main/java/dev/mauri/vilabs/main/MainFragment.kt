@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.mauri.vilabs.databinding.FragmentFirstBinding
 import kotlinx.coroutines.launch
@@ -48,12 +49,22 @@ class MainFragment : Fragment() {
             mainViewModel.fetchUsersInfo()
         }
         lifecycleScope.launch {
-            mainViewModel.usersData
+            mainViewModel.uiStateData
                 .flowWithLifecycle(lifecycle)
-                .collect {
-                    adapter.submitList(it)
-                    _binding?.pullToRefresh?.isRefreshing = false
-                }
+                .collect(::onUiStateChanged)
+        }
+    }
+
+    private fun onUiStateChanged(state: MainViewModel.MainUIState) {
+        when (state) {
+            is MainViewModel.MainUIState.UsersState -> {
+                adapter.submitList(state.users)
+                _binding?.pullToRefresh?.isRefreshing = false
+            }
+            is MainViewModel.MainUIState.ErrorState -> {
+                Snackbar.make(requireView(), state.error, Snackbar.LENGTH_LONG).show()
+            }
+            else -> {}
         }
     }
 

@@ -16,8 +16,8 @@ class MainViewModel @Inject constructor(
 
     private val users = mutableListOf<User>()
 
-    private val _usersData = MutableStateFlow(listOf<User>())
-    val usersData: StateFlow<List<User>> = _usersData
+    private val _uiStateData = MutableStateFlow<MainUIState>(MainUIState.Initial)
+    val uiStateData: StateFlow<MainUIState> = _uiStateData
 
     init {
         fetchUsersInfo()
@@ -26,8 +26,20 @@ class MainViewModel @Inject constructor(
     fun fetchUsersInfo() {
         viewModelScope.launch {
             val resp = usersDataSource.getUsersRemoteInfo()
-            users.addAll(0, resp?.data ?: listOf())
-            _usersData.value = users.toList()
+            if (resp.isSuccess) {
+                users.addAll(0, resp.getOrNull()?.data ?: listOf())
+                _uiStateData.value = MainUIState.UsersState(users.toList())
+            } else {
+                _uiStateData.value = MainUIState.ErrorState(
+                    resp.exceptionOrNull()?.message ?: "Something bad happened"
+                )
+            }
         }
+    }
+
+    sealed class MainUIState {
+        object Initial : MainUIState()
+        class UsersState(val users: List<User>) : MainUIState()
+        class ErrorState(val error: String) : MainUIState()
     }
 }
