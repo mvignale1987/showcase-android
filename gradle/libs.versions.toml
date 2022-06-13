@@ -1,0 +1,31 @@
+[versions]
+retrofit = "2.9.0"
+coil = "2.0.0-rc02"
+moshi = "1.13.0"
+dagger = "2.42"
+androidx-navigation = "2.5.0-alpha03"
+ktlint = "0.45.0"
+kotlin = "1.6.10"
+
+[libraries]
+# Material core
+
+retrofit-lib = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-moshi-converter = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+
+moshi-lib = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
+moshi-codegen-kapt = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
+
+coil-base = { module = "io.coil-kt:coil-base", version.ref = "coil" }
+
+androidx-fragment-navigation = { module = "androidx.navigation:navigation-fragment-ktx", version.ref ="androidx-navigation" }
+androidx-ui-navigation = { module = "androidx.navigation:navigation-ui-ktx", version.ref ="androidx-navigation" }
+
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
+ktlint = { module = "com.pinterest:ktlint", version.ref = "ktlint" }
+
+[bundles]
+retrofit-moshi-impl = ["retrofit-lib", "moshi-lib", "retrofit-moshi-converter"]
+hilt-navigation-impl = ["dagger-hilt-android", "androidx-fragment-navigation",
+    "androidx-ui-navigation"]
